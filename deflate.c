@@ -1152,6 +1152,10 @@ local void lm_init (s)
  * OUT assertion: the match length is not greater than s->lookahead.
  */
 #ifndef ASMV
+
+#if (defined(__i386) || defined(__x86_64)) && !defined(NOT_TWEAK_COMPILER)
+#include "contrib/amd64/longest-match.inc"
+#else
 /* For 80x86 and 680x0, an optimized version will be provided in match.asm or
  * match.S. The code will be functionally equivalent.
  */
@@ -1297,6 +1301,7 @@ local uInt longest_match(s, cur_match)
     if ((uInt)best_len <= s->lookahead) return (uInt)best_len;
     return s->lookahead;
 }
+#endif
 #endif /* ASMV */
 
 #else /* FASTEST */
