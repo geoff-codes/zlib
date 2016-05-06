@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-#define ZLIB_VERSION "1.2.8.1-motley"
+#define ZLIB_VERSION "1.2.8.1-cloudflare"
 #define ZLIB_VERNUM 0x1281
 #define ZLIB_VER_MAJOR 1
 #define ZLIB_VER_MINOR 2
