@@ -1,8 +1,9 @@
-
                 ChangeLog file for zlib
 
-Changes in 1.2.8.1 (xx May 2013)
--
+Changes in 1.2.8.1-cloudflare (5 May 2016)
+- Includes all changes from 1.2.8.1-motley (the "develop" branch upstream)
+- Adds the cloudflare optimizations (including "experimental" branch)
+  (see: https://blog.cloudflare.com/cloudflare-fights-cancer/)
 
 Changes in 1.2.8 (28 Apr 2013)
 - Update contrib/minizip/iowin32.c for Windows RT [Vollant]

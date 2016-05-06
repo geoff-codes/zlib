@@ -1,0 +1,7 @@
+The original zlib library (i.e., Mark Adler's (@madler)'s library, such as that available at zlib.org and github.com/madler/zlib, is made available under the "zlib license" (see COPYING.zlib), a 3-clause "new" BSD license variant.
+
+However, the file at "crc32-pclmul_asm.S", which implements a fast CRC32 algorithm on newer Intel architectures, is licensed under the GNU General Public License v2, as it is derived from the Linux kernel. Due to the "contagious" nature of the GPL, if this file is compiled into the library, the *entire library* and *any programs that link to this library* must likewise be licensed under the GPLv2.
+
+Note that this file (like all the Linux kernel source) does *NOT* have the "either version 2 of the License, or (at your option) any later version" clause — making it *incompatible* with the GPLv3 (look it up). Thus, it may NOT be used with or within any GPLv3 software.
+
+This "cloudflare zlib" fork is still considerably faster that the original zlib implementation, even without this file; if you do not wish to be restricted by the terms of the GPL, you may use use the --no-gpl configure flag, and the library will retain the original "zlib license".
