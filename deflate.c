@@ -1087,7 +1087,7 @@ static void lm_init (s)
  *
  * ------------------------------------------------------------
  * uInt longest_match(...) {
- *    ...   
+ *    ...
  *    do {
  *        match = s->window + cur_match;                //s0
  *        if (*(ushf*)(match+best_len-1) != scan_end || //s1
@@ -1125,7 +1125,7 @@ static void lm_init (s)
  *       "s->window" is loop-invariant of that newly created tight loop. It is
  *       lot easier for compiler to promote this quantity to register and keep
  *       its value throughout the entire small loop.
- * 
+ *
  * 2) Transfrom s3 such that it examines sizeof(long)-byte-match at a time.
  *    This is done by:
  *        ------------------------------------------------
@@ -1326,7 +1326,7 @@ static void fill_window(s)
                later. (Using level 0 permanently is not an optimal usage of
                zlib, so we don't care about this pathological case.)
              */
-            
+
             /* Use intrinsics, because compiler generates suboptimal code */
             n = s->hash_size;
             __m128i W = _mm_set1_epi16(wsize);

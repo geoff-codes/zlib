@@ -759,7 +759,7 @@ fi
 
 # Check for AMD64 hardware support.
 if [ x$TGT_ARCH = "xx86_64" -a $(uname -m) = "x86_64" ] ; then
- 
+
   # Check for PCLMUL support
 cat > $test.c << EOF
 void foo(void) {
@@ -777,7 +777,7 @@ EOF
     echo "Checking for PCLMUL support ... No" | tee -a configure.log
   fi
 
-  # Check for SSE4.2 support. Not all compiler set __SSE4_2__ 
+  # Check for SSE4.2 support. Not all compiler set __SSE4_2__
 cat > $test.c << EOF
 void foo(void) {
 #ifndef __SSE4_2__

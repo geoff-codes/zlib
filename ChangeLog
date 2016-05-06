@@ -2,7 +2,7 @@
                 ChangeLog file for zlib
 
 Changes in 1.2.8.1 (xx May 2013)
-- 
+-
 
 Changes in 1.2.8 (28 Apr 2013)
 - Update contrib/minizip/iowin32.c for Windows RT [Vollant]

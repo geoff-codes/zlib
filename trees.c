@@ -1076,7 +1076,7 @@ static void compress_block(s, ltree, dtree)
                 filled -= 64;
                 bit_buf = val >> (len - filled);
             }
-            
+
             extra = extra_lbits[code];
             if (extra != 0) {
                 lc -= base_length[code];

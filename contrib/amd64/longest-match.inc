@@ -6,7 +6,7 @@
  *
  * ------------------------------------------------------------
  * uInt longest_match(...) {
- *    ...   
+ *    ...
  *    do {
  *        match = s->window + cur_match;                //s0
  *        if (*(ushf*)(match+best_len-1) != scan_end || //s1
@@ -44,7 +44,7 @@
  *       "s->window" is loop-invariant of that newly created tight loop. It is
  *       lot easier for compiler to promote this quantity to register and keep
  *       its value throughout the entire small loop.
- * 
+ *
  * 2) Transfrom s3 such that it examines sizeof(long)-byte-match at a time.
  *    This is done by:
  *        ------------------------------------------------
