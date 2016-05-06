@@ -68,7 +68,7 @@ else
 fi
 
 # set defaults before processing command line options
-CFLAGS="-O3 -march=native -DEXPERIMENTAL"
+CFLAGS=${CFLAGS="-O3 -march=native"}
 LDCONFIG=${LDCONFIG-"ldconfig"}
 LDSHAREDLIBC="${LDSHAREDLIBC--lc}"
 ARCHS=   # target specific flags
@@ -91,6 +91,13 @@ old_cc="$CC"
 old_cflags="$CFLAGS"
 OBJC='$(OBJZ) $(OBJG)'
 PIC_OBJC='$(PIC_OBJZ) $(PIC_OBJG)'
+
+# experimental=0 ## Uncomment to default to stable.
+
+gpl=1 # Default w/ cloudflare; see --no-gpl flag and PCLMULQDQ check below.
+
+# Darwin/clang can't handle the GAS mnemonics of crc32-pclmul_asm.S anyway.
+$CC $CFLAGS -dM -E - </dev/null | grep __MACH__ >/dev/null && gpl=0
 
 # leave this script, optionally in a bad way
 leave()
@@ -136,6 +143,9 @@ case "$1" in
     --sysconfdir=*) echo "ignored option: --sysconfdir" | tee -a configure.log; shift ;;
     --localstatedir=*) echo "ignored option: --localstatedir" | tee -a configure.log; shift ;;
     -c* | --const) zconst=1; shift ;;
+    --experimental) experimental=1; shift ;;
+    --stable)       experimental=0; shift ;;
+    --nogpl|--no-gpl) gpl=0; shift ;;
     *)
       echo "unknown option: $1" | tee -a configure.log
       echo "$0 --help for help" | tee -a configure.log
@@ -761,23 +771,6 @@ fi
 # Check for AMD64 hardware support.
 if [ x$TGT_ARCH = "xx86_64" -a $(uname -m) = "x86_64" ] ; then
 
-  # Check for PCLMUL support
-cat > $test.c << EOF
-void foo(void) {
-#ifndef __PCLMUL__
-    #error no pclmul
-#endif
-}
-EOF
-
-  if try $CC -c $CFLAGS $test.c ; then
-    CFLAGS="-DHAS_PCLMUL $CFLAGS"
-    SFLAGS="-DHAS_PCLMUL $SFLAGS"
-    echo "Checking for PCLMUL support ... Yes" | tee -a configure.log
-  else
-    echo "Checking for PCLMUL support ... No" | tee -a configure.log
-  fi
-
   # Check for SSE4.2 support. Not all compiler set __SSE4_2__
 cat > $test.c << EOF
 void foo(void) {
@@ -795,10 +788,66 @@ EOF
     echo "Checking for SSE4.2 support ... No" | tee -a configure.log
   fi
 
+
+  # Check for PCLMUL support
+cat > $test.c << EOF
+void foo(void) {
+#ifndef __PCLMUL__
+    #error no pclmul
+#endif
+}
+EOF
+
+  if try $CC -c $CFLAGS $test.c ; then
+    echo "Checking for PCLMUL support ... Yes" | tee -a configure.log
+
+    case ${gpl=1} in
+      0) : ;;
+      1) { echo
+           echo "************************************************************"
+           echo "Using GPL-licensed CLMULQDQ fast CRC assembly!"
+           echo "The entire library will therefore be licensed GPLv2."
+           echo "Use --no-gpl flag to disable GPL code / enable zlib license."
+           echo "************************************************************"
+         } >&2
+           CFLAGS="-DHAS_PCLMUL $CFLAGS"
+           SFLAGS="-DHAS_PCLMUL $SFLAGS" ;;
+      *) echo "We have a problem. $0 : $LINENO" >&2 && exit 1 ;;
+    esac
+  else
+    echo "Checking for PCLMUL support ... No" | tee -a configure.log
+  fi
+  set +x
+
 fi # end of "Check amd64 hardware support"
+
+case ${experimental=1} in
+  0) { echo
+       echo "Using stable code path."
+       echo "Use --experimental to enable experimental code."
+       echo ;} >&2 ;;
+  1) { echo
+       echo "************************************************************"
+       echo "Using EXPERIMENTAL code path."
+       echo "Use --stable flag to disable experimental code."
+       echo "************************************************************"
+       echo ;} >&2
+       CFLAGS="$CFLAGS -DEXPERIMENTAL" ;;
+  *) echo "We have a problem. $0 : Line $LINENO" >&2 && exit 1 ;;
+esac
+
+LICENCE=
+case ${gpl=1} in
+  0) LICENSE=zlib ;;
+  1) LICENSE=GPLv2 ;;
+  *) echo "We have a problem. $0 : $LINENO" >&2 && exit 1 ;;
+esac
+
+{ echo "License: $LICENSE"; echo ;} >&2
 
 # show the results in the log
 echo >> configure.log
+echo LICENSE = $LICENSE >> configure.log
 echo ALL = $ALL >> configure.log
 echo AR = $AR >> configure.log
 echo ARFLAGS = $ARFLAGS >> configure.log
